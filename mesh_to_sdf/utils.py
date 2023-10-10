@@ -1,6 +1,8 @@
 import functools
-import trimesh
+
 import numpy as np
+import trimesh
+
 
 def scale_to_unit_sphere(mesh):
     if isinstance(mesh, trimesh.Scene):
@@ -20,6 +22,39 @@ def scale_to_unit_cube(mesh):
     vertices *= 2 / np.max(mesh.bounding_box.extents)
 
     return trimesh.Trimesh(vertices=vertices, faces=mesh.faces)
+
+def scale_point_cloud_to_unit_sphere(point_cloud):
+    # Note:  Don't center the point cloud on the centroid of all its points since we know the center is already set up
+    # from the mocap markers, and the observed points might be biased to uncenter it.
+    # # Center the point cloud on the centroid of the points on the point cloud.
+    # point_cloud = point_cloud - np.average(point_cloud, axis=0)
+
+    # Find the largest radius of the points on the object and normalize by it.
+    distances = np.linalg.norm(point_cloud, axis=1)
+    point_cloud /= np.max(distances)
+    
+    return point_cloud
+
+def scale_point_cloud_to_unit_cube(point_cloud):
+    # Note:  Don't center the point cloud on the centroid of all its points since we know the center is already set up
+    # from the mocap markers, and the observed points might be biased to uncenter it.
+    # # Center the point cloud on the centroid of the points on the point cloud.
+    # point_cloud = point_cloud - np.average(point_cloud, axis=0)
+
+    # Divide all point locations by the maximum x-, y-, or z-length of the cloud.
+    max_length = np.max(np.max(point_cloud, axis=0) - np.min(point_cloud, axis=0))
+    point_cloud *= 2 / max_length
+    
+    return point_cloud
+
+def get_into_n_by_3_shape(array):
+    assert 3 in array.shape, print(f'Cannot put array of shape {array.shape} into (n, 3) shape.')
+    assert array.ndim == 2, print(f'Only set up to handle 2-dimensional arrays, given {array.shape} instead.')
+
+    if array.shape[0] == 3:
+        array = np.transpose(array, axes=(1, 0))
+
+    return array
 
 # Use get_raster_points.cache_clear() to clear the cache
 @functools.lru_cache(maxsize=4)

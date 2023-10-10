@@ -15,6 +15,7 @@ class BadMeshException(Exception):
 
 class SurfacePointCloud:
     def __init__(self, mesh, points, normals=None, scans=None):
+        print('IN LOCAL MESH_TO_SDF')
         self.mesh = mesh
         self.points = points
         self.normals = normals
@@ -147,6 +148,25 @@ class SurfacePointCloud:
                 result = np.logical_or(result, scan.is_visible(points))
         return result
 
+
+class SurfacePointCloudFromPointCloud(SurfacePointCloud):
+    def __init__(self, _mesh, points, normals=None, scans=None):
+        # Same as parent but without a mesh.
+        print('In custom SurfacePointCloudFromPointCloud class.')
+        super().__init__(None, points, normals=normals, scans=scans)
+
+    def get_random_surface_points(self, count, use_scans=True):
+        # Overwrite `use_scans` to be true since there's no mesh to rely on.
+        return super().get_random_surface_points(count, use_scans=True)
+    
+    def sample_sdf_near_surface(self, number_of_points=500000, use_scans=True, sign_method='normal',
+                                normal_sample_count=11, min_size=0, return_gradients=False):
+        # Overwrite `use_scans` to be true since there's no mesh to rely on.
+        return super().sample_sdf_near_surface(number_of_points, True, sign_method,
+                                               normal_sample_count, min_size, return_gradients)
+    
+
+
 def get_equidistant_camera_angles(count):
     increment = math.pi * (3 - math.sqrt(5))
     for i in range(count):
@@ -186,3 +206,6 @@ def sample_from_mesh(mesh, sample_point_count=10000000, calculate_normals=True):
         normals=normals if calculate_normals else None,
         scans=None
     )
+
+def create_from_point_cloud(xyzs, normals):
+    return SurfacePointCloudFromPointCloud(None, xyzs, normals)
