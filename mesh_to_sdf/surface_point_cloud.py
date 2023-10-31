@@ -15,7 +15,6 @@ class BadMeshException(Exception):
 
 class SurfacePointCloud:
     def __init__(self, mesh, points, normals=None, scans=None):
-        print('IN LOCAL MESH_TO_SDF')
         self.mesh = mesh
         self.points = points
         self.normals = normals
@@ -152,7 +151,6 @@ class SurfacePointCloud:
 class SurfacePointCloudFromPointCloud(SurfacePointCloud):
     def __init__(self, _mesh, points, normals=None, scans=None):
         # Same as parent but without a mesh.
-        print('In custom SurfacePointCloudFromPointCloud class.')
         super().__init__(None, points, normals=normals, scans=scans)
 
     def get_random_surface_points(self, count, use_scans=True):

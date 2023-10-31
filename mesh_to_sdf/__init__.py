@@ -88,16 +88,15 @@ def sample_sdf_near_surface(mesh, number_of_points = 500000, surface_point_metho
 
 
 def sample_sdf_near_surface_point_cloud(xyzs, normals, number_of_points=500000, sign_method='normal',
-                                        scan_count=100, scan_resolution=400, sample_point_count=10000000,
                                         normal_sample_count=11, min_size=0, return_gradients=False):
     xyzs = scale_point_cloud_to_unit_sphere(xyzs)
 
     surface_point_cloud = get_surface_point_cloud(None, 'point_cloud', xyzs=xyzs, normals=normals)
 
-    import pdb
-    print('For debugging, continue to show point cloud.')
-    pdb.set_trace()
-    surface_point_cloud.show()
+    # import pdb
+    # print('For debugging, continue to show point cloud.')
+    # pdb.set_trace()
+    # surface_point_cloud.show()
 
     return surface_point_cloud.sample_sdf_near_surface(number_of_points, True, sign_method, normal_sample_count,
                                                        min_size, return_gradients)
